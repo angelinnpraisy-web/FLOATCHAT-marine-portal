@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 900" fill="none">
+  <circle cx="450" cy="450" r="290" stroke="#ff6b35" stroke-width="2" stroke-dasharray="8 18"/>
+  <circle cx="450" cy="450" r="205" stroke="#4a9eff" stroke-width="1.5" stroke-dasharray="3 14"/>
+  <path d="M450 88C650 88 812 250 812 450S650 812 450 812 88 650 88 450 250 88 450 88Z" stroke="#ff35a8" stroke-width="1.5" opacity=".8"/>
+  <circle cx="718" cy="292" r="8" fill="#ff6b35"/>
+  <circle cx="224" cy="635" r="6" fill="#4a9eff"/>
+</svg>

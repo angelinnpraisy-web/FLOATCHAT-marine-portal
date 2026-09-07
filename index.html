@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FLOATCHAT | 4D Marine Data Exploration Portal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <LINK REL="stylesheet" HREF="style.css">
+        <script type="importmap">
+            {
+                "imports": {
+                    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+                    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+                }
+            }
+        </script>
+    <script type="module" src="app.js"></script>
+</head>
+<body>
+    <div class="background-animation">
+        <div class="grid-background"></div>
+        <img src="background-orbit.svg" alt="" class="background-image">
+        <div class="floating-blob blob-1"></div>
+        <div class="floating-blob blob-2"></div>
+        <div class="floating-blob blob-3"></div>
+        <div class="floating-blob blob-4"></div>
+    </div>
+    <nav class="navbar">
+
+        <div  class="logo">
+            <img src="logo.svg" alt="FLOATCHAT logo" class="logo-image">
+            <h2>FLOATCHAT <br><span style="color: #007bff; font-weight: 500; opacity: 0.9;" class="caption">4D Marine Data Exploration Portal</span> </h2>
+        </div>
+        <div class="menu-toggle" id="mobile-menu">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </div>
+    
+    <ul class="nav-links">
+        <li><a href="#globe" class="active"><i class="icon">🌐</i> 3D Explorer</a></li>
+        <li><a href="#depth"><i class="icon">📊</i> Depth Profiler</a></li>
+        <li><a href="#anomalies"><i class="icon">🚨</i> Anomaly Radar <span class="badge-pulse"></span></a></li>
+        <li><a href="#slide-leftbar" id="open-chatbot"><i class="icon">🤖</i> Query AI</a></li>
+    </ul>
+    <div class="nav-status">
+    
+  <span class="status-dot"></span>
+  <span class="status-label">NOAA NetCDF Stream:</span>
+  <span class="status-value">CONNECTED</span>
+  <span class="status-divider"></span>
+  <span class="status-time" id="utc-clock">00:00:00 UTC</span>
+
+  </div>
+  </nav>
+
+  <!--Hero Section-->
+    <section class="hero-section" aria-label="FLOATCHAT homepage hero section">
+        <div class="hero-copy">
+            <span class="hero-kicker">MARINE INTELLIGENCE PLATFORM</span>
+            <h1>Track the ocean in motion.</h1>
+            <p>Monitor coral stress, fishing zones, and deep-water conditions through a real-time 4D view of the marine environment.</p>
+            <div class="hero-actions">
+                <a href="#globe" class="cta-button primary">Explore 3D Explorer</a>
+                <a href="#depth" class="cta-button secondary">View Depth Data</a>
+            </div>
+            <div class="hero-stats" aria-label="Platform highlights">
+                <div>
+                    <strong>4D</strong>
+                    <span>Ocean view</span>
+                </div>
+                <div>
+                    <strong>240+</strong>
+                    <span>Monitoring zones</span>
+                </div>
+                <div>
+                    <strong>24/7</strong>
+                    <span>Signal tracking</span>
+                </div>
+            </div>
+        </div>
+        <div class="hero-visual" aria-hidden="true">
+            <img src="background-orbit.svg" alt="Ocean data visualization" />
+        </div>
+    </section>
+    <div class="scroll-indicator">
+        <span class="scroll-arrow">↓</span>
+    </div>
+
+    <section class="feature-strip" aria-label="FLOATCHAT platform highlights">
+        <div class="feature-strip-inner">
+            <span>Coastal intelligence</span>
+            <span>Fisheries planning</span>
+            <span>Coral monitoring</span>
+            <span>Ocean forecasting</span>
+        </div>
+    </section>
+
+    <section class="feature-grid" aria-label="Key platform capabilities">
+        <article class="feature-card">
+            <div class="feature-icon">🫧</div>
+            <h3>Coral resilience</h3>
+            <p>Track bleaching risk and reef stress before impacts spread across critical marine habitats.</p>
+        </article>
+        <article class="feature-card">
+            <div class="feature-icon">🎣</div>
+            <h3>Fishing intelligence</h3>
+            <p>Identify productive fishing corridors, bloom events, and habitat pressure zones in real time.</p>
+        </article>
+        <article class="feature-card">
+            <div class="feature-icon">🌊</div>
+            <h3>Ocean forecasting</h3>
+            <p>Visualize depth, temperature, and anomaly patterns to understand marine conditions faster.</p>
+        </article>
+    </section>
+
+    <section class="AI-chatbot" id="slide-leftbar">
+        <div class="chatbot-header">
+            <div>
+                <h2>Query AI</h2>
+                <span>Ask anything about the ocean data</span>
+            </div>
+            <button id="close-chatbot" type="button" aria-label="Close Query AI">&times;</button>
+        </div>
+        <div class="chatbot-body">
+            <p class="chatbot-welcome">What would you like to explore?</p>
+            <div class="chatbot-input-row">
+                <input id="chatbot-input" type="text" placeholder="Ask about marine data..." aria-label="Ask Query AI">
+                <button id="send-chatbot" type="button" aria-label="Send question">&#8594;</button>
+            </div>
+        </div>
+    </section>
+    <section class="globe-section" id="globe">
+        <h2>3D Globe Explorer</h2>
+        <p>Visualize marine data in a 3D globe environment.</p>
+        <div id="globe-container" aria-label="Interactive rotating Earth globe">
+            <div class="globe-toolbar">
+                <span><span class="globe-live-dot"></span> <span id="globe-location">CLICK EARTH TO SELECT A STATION</span> <strong id="globe-location-name"></strong></span>
+                <div class="globe-actions">
+                    <button id="load-depth-profile" type="button" disabled>Load depth profile</button>
+                    <button id="globe-autorotate" type="button" aria-pressed="true">Pause rotation</button>
+                </div>
+            </div>
+            <div id="globe-loading">Loading Earth data...</div>
+        </div>
+
+        <div id="location-suggestion" class="location-suggestion" hidden>
+            <div class="suggestion-header">
+                <span class="globe-live-dot"></span>
+                <strong>Suggested marine exploration</strong>
+            </div>
+            <p id="location-suggestion-text">Select a marine location to see targeted reef and fishing recommendations.</p>
+            <div class="suggestion-actions">
+                <a id="suggest-coral-link" href="coral.html" class="suggestion-link coral-link">Explore coral bleaching</a>
+                <a id="suggest-fishing-link" href="fishing.html" class="suggestion-link fishing-link">Explore fishing zones</a>
+            </div>
+        </div>
+    </section>
+    <section class="depth-section" id="depth">
+        <h2>Depth Profiler</h2>
+        <p>Analyze ocean depth data with interactive charts.</p>
+        <div id="depth-container" aria-label="Interactive depth profiler chart">
+            <div class="depth-toolbar">
+                <span><span class="depth-live-dot"></span> LIVE DEPTH DATA <span id="depth-location">/ SELECT A LOCATION ON THE GLOBE</span> <strong id="depth-location-name"></strong></span>
+                <div class="depth-actions">
+                    <button id="depth-export" type="button">Export CSV</button>
+                    <button id="depth-refresh" type="button">Refresh Data</button>
+                </div>
+            </div>
+            <div class="depth-dashboard">
+                <div class="depth-copy">
+                    <span class="depth-kicker" id="depth-station">PROFILER / STATION 04</span>
+                    <h3>Water column conditions</h3>
+                    <p>Drag the probe through the water column to inspect changing conditions.</p>
+                    <label class="depth-control" for="depth-slider">
+                        <span>Probe depth</span>
+                        <strong><span id="depth-value">1,200</span> m</strong>
+                    </label>
+                    <input id="depth-slider" type="range" min="0" max="11000" value="1200" step="50" aria-label="Probe depth in meters">
+                    <div class="depth-scale"><span>Surface</span><span>11,000 m</span></div>
+                    <div class="depth-readouts">
+                        <div><span>Temperature</span><strong id="depth-temperature">8.6 °C</strong></div>
+                        <div><span>Pressure</span><strong id="depth-pressure">121 bar</strong></div>
+                    </div>
+                    <div class="depth-insight" id="depth-insight">
+                        <span class="depth-insight-icon">◆</span>
+                        <div><span>OCEAN INSIGHT</span><strong id="depth-insight-text">Transitioning through the thermocline</strong></div>
+                    </div>
+                    <div class="depth-confidence">
+                        <span>Profile confidence</span>
+                        <strong><span id="depth-confidence-value">98</span>%</strong>
+                        <div><i id="depth-confidence-bar"></i></div>
+                    </div>
+                    <span class="depth-source" id="depth-source">SIMULATED PROFILE</span>
+                </div>
+                <div class="depth-column" aria-hidden="true">
+                    <div class="depth-layer-labels"><span>Sunlight zone</span><span>Twilight zone</span><span>Abyssal zone</span></div>
+                    <div class="depth-water">
+                        <div class="depth-marker"><span></span></div>
+                        <div class="depth-grid"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="anomalies-section" id="anomalies">
+        <h2>Anomaly Radar</h2>
+        <p>Detect and visualize anomalies in marine data.</p>
+        <div id="anomalies-container" aria-label="Interactive anomaly radar chart">
+            <div class="anomalies-toolbar">
+                <span><span class="anomalies-live-dot"></span> LIVE ANOMALY DETECTION</span>
+                <div class="anomalies-actions">
+                    <button id="anomalies-export" type="button">Export CSV</button>
+                    <button id="anomalies-refresh" type="button">Refresh Data</button>
+                </div>
+            </div>
+            <div class="anomalies-dashboard">
+                <div class="anomalies-copy">
+                    <span class="anomalies-kicker" id="anomalies-station">ANOMALY DETECTION / STATION 04</span>
+                    <h3>Current anomalies detected</h3>
+                    <ul id="anomalies-list">
+                        <!-- Anomaly items will be dynamically inserted here -->
+                    </ul>
+                </div>
+                <div class="anomalies-chart" aria-hidden="true">
+                    <!-- Anomaly radar chart will be rendered here -->
+                </div>
+            </div>
+            <div class="anomalies-monitor-row">
+                <button id="coral-bleaching-monitor" onclick="window.location.href='coral.html'" type="button" class="anomalies-monitor-button">🪸 Monitor Coral Bleaching</button>
+                <button id="fishing-zone-detector" onclick="window.location.href='fishing.html'" type="button" class="anomalies-monitor-button">🎣 Detect Fishing Zones</button>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

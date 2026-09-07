@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fishing Zone Detector</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="page-shell fishing-page">
+  <div class="page-background" aria-hidden="true"></div>
+
+  <main class="detail-page">
+    <header class="page-header">
+      <div>
+        <span class="eyebrow">FISHING ZONE MONITOR</span>
+        <h1>Fishing Zone Anomaly Detector</h1>
+      </div>
+      <div class="header-actions">
+        <span class="status-pill warning">WATCHLIST</span>
+        <button class="back-button" onclick="window.location.href='index.html'">Back to Dashboard</button>
+      </div>
+    </header>
+
+    <section class="metric-grid">
+      <article class="metric-card accent-card">
+        <span class="metric-label">Oxygen Deficit</span>
+        <strong id="fishing-oxygen">-1.8 mg/L</strong>
+        <small id="fishing-region">North shelf edge</small>
+      </article>
+      <article class="metric-card">
+        <span class="metric-label">Bloom Risk</span>
+        <strong id="fishing-risk">62%</strong>
+        <small>Phytoplankton surge</small>
+      </article>
+      <article class="metric-card">
+        <span class="metric-label">Compliance</span>
+        <strong id="fishing-compliance">94%</strong>
+        <small>Fishing corridor health</small>
+      </article>
+    </section>
+
+    <section class="panel chart-panel">
+      <div class="panel-heading">
+        <h2 id="fishing-title">Habitat risk map</h2>
+        <span class="live-status"><i></i> LIVE OCEAN ALERTS</span>
+      </div>
+      <p id="fishing-description">Showing oxygen depletion and plankton bloom anomalies across active fishing zones.</p>
+      <div class="fishing-grid">
+        <div class="zone-card risk-high">
+          <span>Zone 01</span>
+          <strong>Closed</strong>
+          <small>Low oxygen / high bloom</small>
+        </div>
+        <div class="zone-card risk-med">
+          <span>Zone 02</span>
+          <strong>Watch</strong>
+          <small>Elevated fishing pressure</small>
+        </div>
+        <div class="zone-card risk-low">
+          <span>Zone 03</span>
+          <strong>Stable</strong>
+          <small>Seasonal baseline</small>
+        </div>
+      </div>
+    </section>
+  </main>
+  <script>
+    function parseLocation() {
+      const params = new URLSearchParams(window.location.search);
+      const lat = Number(params.get('lat') || 0);
+      const lon = Number(params.get('lon') || 0);
+      const label = params.get('label') || 'Selected fishing sector';
+      const name = params.get('name') || 'Selected marine area';
+      return { lat, lon, label, name };
+    }
+
+    function fishingSummary(lat, lon, regionName) {
+      const absLat = Math.abs(lat);
+      const oxygen = (-(0.9 + absLat / 48 + Math.abs(lon) / 380)).toFixed(1);
+      const risk = Math.min(89, Math.max(45, Math.round(52 + (30 - absLat) * 0.7 + Math.abs(lon) / 20)));
+      const compliance = Math.max(74, 100 - risk / 3);
+      const description = `${regionName} is showing a mixed ecological signal with reduced oxygen and elevated bloom risk. This corridor should be monitored for fishing pressure and stock health.`;
+      return {
+        oxygen: `${oxygen} mg/L`,
+        risk: `${risk}%`,
+        compliance: `${Math.round(compliance)}%`,
+        region: regionName,
+        title: `Habitat risk map / ${regionName}`,
+        description
+      };
+    }
+
+    const { lat, lon, name } = parseLocation();
+    const summary = fishingSummary(lat, lon, name || 'Selected marine area');
+
+    document.getElementById('fishing-oxygen').textContent = summary.oxygen;
+    document.getElementById('fishing-risk').textContent = summary.risk;
+    document.getElementById('fishing-compliance').textContent = summary.compliance;
+    document.getElementById('fishing-region').textContent = summary.region;
+    document.getElementById('fishing-title').textContent = summary.title;
+    document.getElementById('fishing-description').textContent = summary.description;
+  </script>
+</body>
+</html>

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Coral Bleaching Monitor</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="page-shell coral-page">
+  <div class="page-background" aria-hidden="true"></div>
+
+  <main class="detail-page">
+    <header class="page-header">
+      <div>
+        <span class="eyebrow">REEF SYSTEM ALERT</span>
+        <h1>Coral Bleaching Early-Warning System</h1>
+      </div>
+      <div class="header-actions">
+        <span class="status-pill danger">HIGH RISK</span>
+        <button class="back-button" onclick="window.location.href='index.html'">Back to Dashboard</button>
+      </div>
+    </header>
+
+    <section class="metric-grid">
+      <article class="metric-card accent-card">
+        <span class="metric-label">Sea Surface Temp</span>
+        <strong id="coral-temp">+2.1°C</strong>
+        <small id="coral-region">Great Barrier Reef</small>
+      </article>
+      <article class="metric-card">
+        <span class="metric-label">Bleaching Risk</span>
+        <strong id="coral-risk">87%</strong>
+        <small>Stress index</small>
+      </article>
+      <article class="metric-card">
+        <span class="metric-label">Recovery Window</span>
+        <strong id="coral-window">4-6 wks</strong>
+        <small>Before peak stress</small>
+      </article>
+    </section>
+
+    <section class="panel chart-panel">
+      <div class="panel-heading">
+        <h2 id="coral-title">Thermal anomaly trend</h2>
+        <span class="live-status"><i></i> LIVE SST TRACK</span>
+      </div>
+      <p id="coral-description">Showing sea surface temperature anomalies near reef regions.</p>
+      <div class="chart-wrap">
+        <canvas id="coralChart" aria-label="Coral bleaching chart"></canvas>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    function parseLocation() {
+      const params = new URLSearchParams(window.location.search);
+      const lat = Number(params.get('lat') || 0);
+      const lon = Number(params.get('lon') || 0);
+      const label = params.get('label') || 'Selected reef sector';
+      const name = params.get('name') || 'Selected marine area';
+      return { lat, lon, label, name };
+    }
+
+    function coralSummary(lat, lon, regionName) {
+      const absLat = Math.abs(lat);
+      const risk = Math.min(96, Math.max(58, Math.round(68 + (30 - absLat) * 0.8 + Math.abs(lon) / 18)));
+      const anomaly = (1.4 + (30 - absLat) / 22 + Math.abs(lon) / 240).toFixed(1);
+      const window = absLat > 20 ? '3-5 wks' : '2-4 wks';
+      const description = `${regionName} is showing warm-water stress conditions consistent with coral bleaching risk. Water temperatures in this sector are above the seasonal baseline and deserve close monitoring.`;
+      return {
+        temp: `+${anomaly}°C`,
+        risk: `${risk}%`,
+        window,
+        region: regionName,
+        description,
+        title: `Thermal anomaly trend / ${regionName}`
+      };
+    }
+
+    const { lat, lon, label, name } = parseLocation();
+    const summary = coralSummary(lat, lon, name || label);
+
+    document.getElementById('coral-temp').textContent = summary.temp;
+    document.getElementById('coral-risk').textContent = summary.risk;
+    document.getElementById('coral-window').textContent = summary.window;
+    document.getElementById('coral-region').textContent = summary.region;
+    document.getElementById('coral-title').textContent = summary.title;
+    document.getElementById('coral-description').textContent = summary.description;
+
+    new Chart(document.getElementById("coralChart"), {
+      type: "bar",
+      data: {
+        labels: [summary.region, "Adjacent reef shelf", "Regional baseline"],
+        datasets: [{
+          label: "SST Anomaly (°C)",
+          data: [Number(summary.temp.replace(/[°C+%]/g, '')), 1.2, 0.6],
+          borderRadius: 10,
+          backgroundColor: ["#f43f5e", "#fb923c", "#f59e0b"]
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          y: {
+            grid: { color: "rgba(148, 163, 184, 0.15)" },
+            ticks: { color: "#cbd5e1" }
+          },
+          x: {
+            grid: { display: false },
+            ticks: { color: "#e2e8f0" }
+          }
+        }
+      }
+    });
+  </script>
+</body>
+</html>
+    });
+  </script>
+</body>
+</html>
